@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://ai-investment-research-agent-jx0c.onrender.com",
+  baseURL: "https://ai-investment-research-agent-1-2ztb.onrender.com",
 });
 
 export const researchCompany = async (company) => {
