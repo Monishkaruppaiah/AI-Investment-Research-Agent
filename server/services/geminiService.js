@@ -13,10 +13,12 @@ You are an expert investment analyst.
 
 Analyze the company: ${companyName}
 
-Provide a comprehensive investment report. Your output MUST be exactly in the following JSON format. Do not include any other text outside the JSON object.
+Provide a comprehensive investment report.
+
+Your response MUST be valid JSON only.
 
 {
-  "markdownReport": "# Company Overview\n\nExplain the company.\n\n# Industry\n\nExplain the industry.\n\n# Products & Services\n\nList the products and services.\n\n# SWOT Analysis\n\nSummarize strengths, weaknesses, opportunities, and risks.",
+  "markdownReport": "# Company Overview\\n\\nExplain the company.\\n\\n# Industry\\n\\nExplain the industry.\\n\\n# Products & Services\\n\\nList the products and services.\\n\\n# SWOT Analysis\\n\\nSummarize strengths, weaknesses, opportunities, and risks.",
   "scores": {
     "investment": 88,
     "revenue": 82,
@@ -26,16 +28,15 @@ Provide a comprehensive investment report. Your output MUST be exactly in the fo
     "future": 93,
     "risk": 35
   },
-  "recommendation": "INVEST" 
+  "recommendation": "INVEST"
 }
 
-Note for recommendation: Return ONLY "INVEST" or "PASS".
-Generate realistic scores between 0 and 100 based on the company's fundamentals. Replace the example numbers with your own analysis.
+Return ONLY valid JSON.
 `;
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -43,6 +44,7 @@ Generate realistic scores between 0 and 100 based on the company's fundamentals.
     });
 
     const data = JSON.parse(response.text);
+
     return data;
   } catch (error) {
     console.error("Gemini API Error:", error);
