@@ -30,7 +30,7 @@ npm install
 ```
 Create a `.env` file inside the `server/` folder:
 ```
-GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_API_KEY=AQ.Ab8RN6IinVW9vd2kzlFgUXTKffDb76W9AAYjVnOWl-wQFlcDwQ
 PORT=5000
 ```
 Start the backend server:
