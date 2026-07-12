@@ -15,7 +15,7 @@ Analyze the company: ${companyName}
 
 Provide a comprehensive investment report.
 
-Your response MUST be valid JSON only.
+Return ONLY valid JSON in this exact format:
 
 {
   "markdownReport": "# Company Overview\\n\\nExplain the company.\\n\\n# Industry\\n\\nExplain the industry.\\n\\n# Products & Services\\n\\nList the products and services.\\n\\n# SWOT Analysis\\n\\nSummarize strengths, weaknesses, opportunities, and risks.",
@@ -31,23 +31,49 @@ Your response MUST be valid JSON only.
   "recommendation": "INVEST"
 }
 
-Return ONLY valid JSON.
+Rules:
+- Return ONLY JSON.
+- No markdown outside JSON.
+- recommendation must be either "INVEST" or "PASS".
+- Scores must be between 0 and 100.
 `;
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
       },
     });
 
-    const data = JSON.parse(response.text);
+    console.log("Gemini Response:");
+    console.log(response);
+
+    const text = response.text;
+
+    console.log("Generated Text:");
+    console.log(text);
+
+    const data = JSON.parse(text);
 
     return data;
   } catch (error) {
-    console.error("Gemini API Error:", error);
-    throw new Error("Failed to generate AI report.");
+    console.error("========== GEMINI ERROR ==========");
+    console.error(error);
+
+    if (error.response) {
+      console.error("Response Data:");
+      console.error(error.response.data);
+    }
+
+    if (error.message) {
+      console.error("Message:");
+      console.error(error.message);
+    }
+
+    console.error("=================================");
+
+    throw error;
   }
 }
