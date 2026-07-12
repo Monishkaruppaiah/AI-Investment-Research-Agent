@@ -8,15 +8,15 @@ import "./App.css";
 
 function App() {
   const [loading, setLoading] = useState(false);
-  const [report, setReport] = useState("");
+  const [reportData, setReportData] = useState(null);
 
   const handleSearch = async (company) => {
     try {
       setLoading(true);
+      setReportData(null);
 
       const data = await researchCompany(company);
-
-      setReport(data.report);
+      setReportData(data.report);
     } catch (error) {
       console.error(error);
       alert("Failed to generate report.");
@@ -30,14 +30,24 @@ function App() {
       <Navbar />
 
       <div className="container">
+        {!reportData && !loading && (
+          <div className="hero-section">
+            <h1 className="hero-title">AI Investment Research Agent</h1>
+            <p className="hero-subtitle">
+              Enter any publicly traded company to generate a comprehensive AI-powered investment analysis.
+            </p>
+          </div>
+        )}
+
         <SearchBar
           onSearch={handleSearch}
           loading={loading}
+          hasData={!!reportData}
         />
 
         {loading && <Loader />}
 
-        {!loading && <Report report={report} />}
+        {!loading && reportData && <Report data={reportData} />}
       </div>
     </div>
   );

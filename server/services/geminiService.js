@@ -13,76 +13,39 @@ You are an expert investment analyst.
 
 Analyze the company: ${companyName}
 
-Return your answer in Markdown.
+Provide a comprehensive investment report. Your output MUST be exactly in the following JSON format. Do not include any other text outside the JSON object.
 
-# Company Overview
+{
+  "markdownReport": "# Company Overview\n\nExplain the company.\n\n# Industry\n\nExplain the industry.\n\n# Products & Services\n\nList the products and services.\n\n# SWOT Analysis\n\nSummarize strengths, weaknesses, opportunities, and risks.",
+  "scores": {
+    "investment": 88,
+    "revenue": 82,
+    "profit": 78,
+    "market": 91,
+    "innovation": 95,
+    "future": 93,
+    "risk": 35
+  },
+  "recommendation": "INVEST" 
+}
 
-Explain the company.
-
-# Industry
-
-Explain the industry.
-
-# Products & Services
-
-List the products and services.
-
-# Strengths
-
-- Point 1
-- Point 2
-- Point 3
-
-# Weaknesses
-
-- Point 1
-- Point 2
-
-# Opportunities
-
-- Point 1
-- Point 2
-
-# Risks
-
-- Point 1
-- Point 2
-
-# SWOT Analysis
-
-Summarize the SWOT.
-
-# AI Scores
-
-Generate realistic scores between 0 and 100.
-
-Investment Score: 88
-Revenue Growth Score: 82
-Profit Growth Score: 78
-Market Growth Score: 91
-Innovation Score: 95
-Future Potential Score: 93
-Risk Score: 35
-
-Replace the example numbers with your own analysis.
-
-# Final Recommendation
-
-Return ONLY one:
-
-✅ INVEST
-
-or
-
-❌ PASS
-
-Explain why in 5 lines.
+Note for recommendation: Return ONLY "INVEST" or "PASS".
+Generate realistic scores between 0 and 100 based on the company's fundamentals. Replace the example numbers with your own analysis.
 `;
 
-  const response = await ai.models.generateContent({
-    model: "gemini-3.5-flash",
-    contents: prompt,
-  });
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+      },
+    });
 
-  return response.text;
+    const data = JSON.parse(response.text);
+    return data;
+  } catch (error) {
+    console.error("Gemini API Error:", error);
+    throw new Error("Failed to generate AI report.");
+  }
 }

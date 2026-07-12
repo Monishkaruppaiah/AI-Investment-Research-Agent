@@ -1,97 +1,68 @@
 import ReactMarkdown from "react-markdown";
 import InvestmentChart from "./InvestmentChart";
+import { TrendingUp, ShieldAlert, BadgeCheck, XCircle } from "lucide-react";
 
-function Report({ report }) {
-  if (!report) return null;
+function Report({ data }) {
+  if (!data) return null;
 
-  const investment =
-    Number(report.match(/Investment Score:\s*(\d+)/i)?.[1]) || 0;
+  const { markdownReport, scores, recommendation } = data;
 
-  const revenue =
-    Number(report.match(/Revenue Growth Score:\s*(\d+)/i)?.[1]) || 0;
-
-  const profit =
-    Number(report.match(/Profit Growth Score:\s*(\d+)/i)?.[1]) || 0;
-
-  const market =
-    Number(report.match(/Market Growth Score:\s*(\d+)/i)?.[1]) || 0;
-
-  const innovation =
-    Number(report.match(/Innovation Score:\s*(\d+)/i)?.[1]) || 0;
-
-  const future =
-    Number(report.match(/Future Potential Score:\s*(\d+)/i)?.[1]) || 0;
-
-  const risk =
-    Number(report.match(/Risk Score:\s*(\d+)/i)?.[1]) || 0;
-
-  const scores = [
-    { name: "Investment", value: investment },
-    { name: "Revenue", value: revenue },
-    { name: "Profit", value: profit },
-    { name: "Market", value: market },
-    { name: "Innovation", value: innovation },
-    { name: "Future", value: future },
-    { name: "Risk", value: risk },
+  const chartData = [
+    { name: "Investment", value: scores?.investment || 0 },
+    { name: "Revenue", value: scores?.revenue || 0 },
+    { name: "Profit", value: scores?.profit || 0 },
+    { name: "Market", value: scores?.market || 0 },
+    { name: "Innovation", value: scores?.innovation || 0 },
+    { name: "Future", value: scores?.future || 0 },
+    { name: "Risk", value: scores?.risk || 0 },
   ];
 
+  const isInvest = recommendation === "INVEST";
+
   return (
-    <>
-      {/* Score Cards */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))",
-          gap: "20px",
-          marginBottom: "30px",
-        }}
-      >
-        <div className="card">
-          <h3>📈 Investment</h3>
-          <h2>{investment}</h2>
-        </div>
-
-        <div className="card">
-          <h3>💰 Revenue</h3>
-          <h2>{revenue}</h2>
-        </div>
-
-        <div className="card">
-          <h3>🏆 Profit</h3>
-          <h2>{profit}</h2>
-        </div>
-
-        <div className="card">
-          <h3>🌍 Market</h3>
-          <h2>{market}</h2>
-        </div>
-
-        <div className="card">
-          <h3>🚀 Innovation</h3>
-          <h2>{innovation}</h2>
-        </div>
-
-        <div className="card">
-          <h3>🔮 Future</h3>
-          <h2>{future}</h2>
-        </div>
-
-        <div className="card">
-          <h3>⚠️ Risk</h3>
-          <h2>{risk}</h2>
+    <div className="report-container fade-in">
+      <div className="recommendation-banner">
+        <h2>AI Verdict:</h2>
+        <div className={`badge ${isInvest ? "badge-invest" : "badge-pass"}`}>
+          {isInvest ? <BadgeCheck size={32} /> : <XCircle size={32} />}
+          <span>{recommendation || "UNKNOWN"}</span>
         </div>
       </div>
 
-      {/* Chart */}
-      <div className="chart">
-        <InvestmentChart scores={scores} />
+      <div className="dashboard-grid">
+        {/* Score Cards */}
+        <div className="scores-grid">
+          {chartData.map((item) => (
+            <div className="score-card glass" key={item.name}>
+              <div className="score-header">
+                <h3>{item.name}</h3>
+                {item.name === "Risk" ? <ShieldAlert size={18} className="icon-risk" /> : <TrendingUp size={18} className="icon-up" />}
+              </div>
+              <div className="score-value">
+                <span className="number">{item.value}</span>
+                <span className="out-of">/100</span>
+              </div>
+              <div className="progress-bar-bg">
+                <div 
+                  className={`progress-bar-fill ${item.name === 'Risk' ? (item.value > 50 ? 'risk-high' : 'risk-low') : 'score-high'}`} 
+                  style={{ width: \`\${item.value}%\` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Chart */}
+        <div className="chart-container glass">
+          <InvestmentChart scores={chartData} />
+        </div>
       </div>
 
-      {/* AI Report */}
-      <div className="report">
-        <ReactMarkdown>{report}</ReactMarkdown>
+      {/* AI Report Markdown */}
+      <div className="markdown-report glass">
+        <ReactMarkdown>{markdownReport}</ReactMarkdown>
       </div>
-    </>
+    </div>
   );
 }
 
